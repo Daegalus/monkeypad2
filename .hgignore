@@ -101,3 +101,6 @@ _ReSharper.MonkeyPad 2.0/BuildScriptCache/3/312f6f18.dat
 _ReSharper.MonkeyPad 2.0/BuildScriptCache/.version
 _ReSharper.MonkeyPad 2.0/BuildScriptCache/.crc
 *.suo
+*.i.cs
+*ReSharper*
+*Debug*
