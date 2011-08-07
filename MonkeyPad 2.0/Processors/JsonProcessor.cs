@@ -1,18 +1,28 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using Newtonsoft.Json;
 
 namespace MonkeyPad2.Processors
 {
     public class JsonProcessor
     {
+        public static String ToJson<T>(T inObject)
+        {
+            var jsonSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            return JsonConvert.SerializeObject(inObject, Formatting.Indented, jsonSettings);
+        }
 
+        public static T FromJson<T>(String jsonContent)
+        {
+            var jsonSettings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                NullValueHandling = NullValueHandling.Ignore
+            };
+            return JsonConvert.DeserializeObject<T>(jsonContent, jsonSettings);
+        }
     }
 }
