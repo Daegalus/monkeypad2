@@ -48,9 +48,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MarkdownDeep.WP7">
+      <HintPath>..\MarkdownDeep.WP7.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Phone" />
     <Reference Include="Microsoft.Phone.Controls" />
     <Reference Include="Microsoft.Phone.Interop" />
+    <Reference Include="Newtonsoft.Json.WindowsPhone">
+      <HintPath>..\packages\Newtonsoft.Json.4.0.2\lib\sl3-wp\Newtonsoft.Json.WindowsPhone.dll</HintPath>
+    </Reference>
     <Reference Include="System.Windows" />
     <Reference Include="system" />
     <Reference Include="System.Core" />
@@ -61,13 +67,18 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Notes\Index.cs" />
     <Compile Include="Notes\Note.cs" />
     <Compile Include="Notes\NoteUtils.cs" />
+    <Compile Include="Notes\SortableObservableCollection.cs" />
     <Compile Include="Processors\JsonProcessor.cs" />
     <Compile Include="Processors\NoteProcessor.cs" />
     <Compile Include="Processors\TagProcessor.cs" />
     <Compile Include="Requests\RequestFactory.cs" />
     <Compile Include="Requests\RequestUtils.cs" />
+    <Compile Include="Tags\Index.cs" />
+    <Compile Include="Tags\Tag.cs" />
+    <Compile Include="Tags\TagUtils.cs" />
     <Compile Include="UI\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
@@ -113,6 +124,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
   </ItemGroup>
