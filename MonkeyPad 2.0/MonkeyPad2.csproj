@@ -76,6 +76,8 @@
     <Compile Include="Processors\TagProcessor.cs" />
     <Compile Include="Requests\RequestFactory.cs" />
     <Compile Include="Requests\RequestUtils.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\SettingsManager.cs" />
     <Compile Include="Tags\Index.cs" />
     <Compile Include="Tags\Tag.cs" />
     <Compile Include="Tags\TagUtils.cs" />

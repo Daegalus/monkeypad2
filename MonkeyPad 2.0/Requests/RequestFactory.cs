@@ -29,11 +29,24 @@ namespace MonkeyPad2.Requests
             return request;
         }
 
+        public static HttpWebRequest CreateListRequest(int limit, string email, string password)
+        {
+            var request = (HttpWebRequest)WebRequest.Create("https://simple-note.appspot.com/api2/index");
+            request.ContentType = "application/x-www-form-urlencoded";
+            request.Method = "GET";
+            _email = email;
+            _password = password;
+            request.BeginGetRequestStream(LoginReadCallback, request);
+            while (!_done) ;
+            _done = false;
+            return request;
+        }
+
         public static HttpWebRequest CreateNoteRequest(string method, Uri uri, Note note, string email, string authToken)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("https://simple-note.appspot.com/api2/data/");
-            if (method == "POST" && note.Key != null)
+            if ((method == "POST" || method == "DELETE") && note.Key != null)
                 stringBuilder.Append(note.Key);
             stringBuilder.Append("?auth=");
             stringBuilder.Append(authToken);
@@ -52,6 +65,8 @@ namespace MonkeyPad2.Requests
                     while(!_done);
                     _done = false;
                     return request;
+                case "DELETE":
+                    return request;
                 default:
                     return null;
             }
@@ -61,7 +76,7 @@ namespace MonkeyPad2.Requests
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("https://simple-note.appspot.com/api2/data/");
-            if (method == "POST" && tag.Version > 0)
+            if ((method == "POST" || method == "DELETE") && tag.Version > 0)
                 stringBuilder.Append(tag.Name);
             stringBuilder.Append("?auth=");
             stringBuilder.Append(authToken);
@@ -79,6 +94,8 @@ namespace MonkeyPad2.Requests
                     request.BeginGetRequestStream(TagReadCallback, request);
                     while (!_done) ;
                     _done = false;
+                    return request;
+                case "DELETE":
                     return request;
                 default:
                     return null;
