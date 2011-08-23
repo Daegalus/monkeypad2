@@ -1,18 +1,15 @@
 ﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+using System.Text;
 
 namespace MonkeyPad2.Requests
 {
     public class RequestUtils
     {
-
+        static public string EncodeTo64(string toEncode)
+        {
+            byte[] toEncodeAsBytes = Encoding.UTF8.GetBytes(toEncode);
+            string returnValue = Convert.ToBase64String(toEncodeAsBytes);
+            return returnValue;
+        }
     }
 }

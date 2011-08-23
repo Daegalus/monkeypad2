@@ -13,6 +13,9 @@ namespace MonkeyPad2.Processors
 {
     public class NoteProcessor
     {
-
+        public static void ProcessIndex(Notes.Index index)
+        {
+            
+        }
     }
 }
