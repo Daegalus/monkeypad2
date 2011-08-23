@@ -36,6 +36,7 @@ namespace MonkeyPad2.Requests
             request.Method = "GET";
             _email = email;
             _password = password;
+            //TODO: Change callback to LIST callback.
             request.BeginGetRequestStream(LoginReadCallback, request);
             while (!_done) ;
             _done = false;
