@@ -61,6 +61,10 @@ namespace MonkeyPad2
             Processors.NoteProcessor.ProcessIndex(workIndex);
         }
 
+        public void GetData()
+        {
+        }
+
         private void NotifyPropertyChanged(String propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
