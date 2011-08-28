@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net;
 using System.Text;
 using MonkeyPad2.Notes;
@@ -20,19 +19,34 @@ namespace MonkeyPad2.Requests
         public static HttpWebRequest CreateLoginRequest(string email, string password)
         {
             var request = (HttpWebRequest) WebRequest.Create("https://simple-note.appspot.com/api/login");
-            request.ContentType = "application/x-www-form-urlencoded";
+            request.ContentType = "text/plain";
             request.UserAgent = UserAgent;
             request.Method = "POST";
             _email = email;
             _password = password;
-            request.BeginGetRequestStream(LoginReadCallback, request);
-            while (!_done);
+            request.BeginGetRequestStream(result =>
+                                              {
+                                                  var sRequest = (HttpWebRequest) result.AsyncState;
+                                                  Stream postStream = sRequest.EndGetRequestStream(result);
+                                                  var stringBuilder = new StringBuilder();
+                                                  stringBuilder.Append("email=");
+                                                  stringBuilder.Append(_email);
+                                                  stringBuilder.Append("&password=");
+                                                  stringBuilder.Append(_password);
+                                                  string postData = RequestUtils.EncodeTo64(stringBuilder.ToString());
+                                                  byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                                                  postStream.Write(byteArray, 0, postData.Length);
+                                                  postStream.Close();
+                                                  _done = true;
+                                                  _password = "";
+                                              }, request);
+            while (!_done) ;
             _done = false;
             return request;
         }
 
         public static HttpWebRequest CreateListRequest(int limit, decimal since, string mark, string email,
-                                                       string password)
+                                                       string authToken)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("https://simple-note.appspot.com/api2/index?limit=");
@@ -47,20 +61,22 @@ namespace MonkeyPad2.Requests
                 stringBuilder.Append("&mark=");
                 stringBuilder.Append(mark);
             }
+            stringBuilder.Append("&auth=");
+            stringBuilder.Append(authToken);
+            stringBuilder.Append("&email=");
+            stringBuilder.Append(email);
             var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
             request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = UserAgent;
             request.Method = "GET";
-            _email = email;
-            _password = password;
             return request;
         }
 
-        public static HttpWebRequest CreateNoteRequest(string method, Uri uri, Note note, string email, string authToken)
+        public static HttpWebRequest CreateNoteRequest(string method, Note note, string email, string authToken)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("https://simple-note.appspot.com/api2/data/");
-            if ((method == "POST" || method == "DELETE") && note.Key != null)
+            if (note.Key != null)
                 stringBuilder.Append(note.Key);
             stringBuilder.Append("?auth=");
             stringBuilder.Append(authToken);
@@ -76,7 +92,17 @@ namespace MonkeyPad2.Requests
                 case "GET":
                     return request;
                 case "POST":
-                    request.BeginGetRequestStream(NoteReadCallback, request);
+                    request.BeginGetRequestStream(result =>
+                                                      {
+                                                          var sRequest = (HttpWebRequest) result.AsyncState;
+                                                          Stream postStream = sRequest.EndGetRequestStream(result);
+                                                          string data = JsonProcessor.ToJson(_note);
+                                                          string postData = data;
+                                                          byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                                                          postStream.Write(byteArray, 0, postData.Length);
+                                                          postStream.Close();
+                                                          _done = true;
+                                                      }, request);
                     while (!_done) ;
                     _done = false;
                     return request;
@@ -87,7 +113,7 @@ namespace MonkeyPad2.Requests
             }
         }
 
-        public static HttpWebRequest CreateTagRequest(string method, Uri uri, Tag tag, string email, string authToken)
+        public static HttpWebRequest CreateTagRequest(string method, Tag tag, string email, string authToken)
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.Append("https://simple-note.appspot.com/api2/data/");
@@ -107,7 +133,17 @@ namespace MonkeyPad2.Requests
                 case "GET":
                     return request;
                 case "POST":
-                    request.BeginGetRequestStream(TagReadCallback, request);
+                    request.BeginGetRequestStream(result =>
+                                                      {
+                                                          var sRequest = (HttpWebRequest) result.AsyncState;
+                                                          Stream postStream = sRequest.EndGetRequestStream(result);
+                                                          string data = JsonProcessor.ToJson(_tag);
+                                                          string postData = data;
+                                                          byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                                                          postStream.Write(byteArray, 0, postData.Length);
+                                                          postStream.Close();
+                                                          _done = true;
+                                                      }, request);
                     while (!_done) ;
                     _done = false;
                     return request;
@@ -116,47 +152,6 @@ namespace MonkeyPad2.Requests
                 default:
                     return null;
             }
-        }
-
-        private static void LoginReadCallback(IAsyncResult result)
-        {
-            var request = (HttpWebRequest) result.AsyncState;
-            Stream postStream = request.EndGetRequestStream(result);
-            var stringBuilder = new StringBuilder();
-            stringBuilder.Append("email=");
-            stringBuilder.Append(_email);
-            stringBuilder.Append("&password");
-            stringBuilder.Append(_password);
-            string postData = RequestUtils.EncodeTo64(stringBuilder.ToString());
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-            postStream.Write(byteArray, 0, postData.Length);
-            postStream.Close();
-            _done = true;
-            _password = "";
-        }
-
-        private static void NoteReadCallback(IAsyncResult result)
-        {
-            var request = (HttpWebRequest) result.AsyncState;
-            Stream postStream = request.EndGetRequestStream(result);
-            string data = JsonProcessor.ToJson(_note);
-            string postData = data;
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-            postStream.Write(byteArray, 0, postData.Length);
-            postStream.Close();
-            _done = true;
-        }
-
-        private static void TagReadCallback(IAsyncResult result)
-        {
-            var request = (HttpWebRequest) result.AsyncState;
-            Stream postStream = request.EndGetRequestStream(result);
-            string data = JsonProcessor.ToJson(_tag);
-            string postData = data;
-            byte[] byteArray = Encoding.UTF8.GetBytes(postData);
-            postStream.Write(byteArray, 0, postData.Length);
-            postStream.Close();
-            _done = true;
         }
     }
 }

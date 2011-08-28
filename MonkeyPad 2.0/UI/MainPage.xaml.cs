@@ -30,7 +30,7 @@ namespace MonkeyPad2.UI
         {
             if (!App.ViewModel.IsDataLoaded)
             {
-                App.ViewModel.LoadData("full");
+                App.ViewModel.LoadData("clean");
             }
         }
     }
