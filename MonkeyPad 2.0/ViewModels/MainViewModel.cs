@@ -11,18 +11,18 @@ namespace MonkeyPad2
     public class MainViewModel : INotifyPropertyChanged
     {
         // Lists
-        public Index NoteIndex;
-        public SortableObservableCollection<Note> Notes = new SortableObservableCollection<Note>();
-        public SortableObservableCollection<Note> Pinned = new SortableObservableCollection<Note>();
-        public SortableObservableCollection<Note> Trashed = new SortableObservableCollection<Note>();
 
         // Global Variables
-        public string authToken = "";
-        public string email = "yulian@kuncheff.com";
-        public volatile bool globalDone;
-        public decimal lastCall;
-        public string mark = "";
-        public string password = "#3817ilj3";
+        public string AuthToken = "";
+        public string Email = "yulian@kuncheff.com";
+        public volatile bool GlobalDone;
+        public decimal LastCall;
+        public string Mark = "";
+        public Index NoteIndex;
+        public SortableObservableCollection<Note> Notes = new SortableObservableCollection<Note>();
+        public string Password = "#3817ilj3";
+        public SortableObservableCollection<Note> Pinned = new SortableObservableCollection<Note>();
+        public SortableObservableCollection<Note> Trashed = new SortableObservableCollection<Note>();
 
         public bool IsDataLoaded { get; private set; }
 
@@ -34,49 +34,51 @@ namespace MonkeyPad2
 
         public void LoadData(string mode)
         {
-            if (authToken == "")
+            if (AuthToken == "")
                 GetLogin();
 
-            else if (mode == "clean")
-                GetIndex();
-            else if (mode == "refresh")
-                GetIndex(lastCall);
-            else if (mode == "more")
-                GetIndex(0, NoteIndex.Mark);
+            else
+                switch (mode)
+                {
+                    case "clean":
+                        GetIndex();
+                        break;
+                    case "refresh":
+                        GetIndex(LastCall);
+                        break;
+                    case "more":
+                        GetIndex(0, NoteIndex.Mark);
+                        break;
+                }
 
             //GetData();
-            int i = 1 + 1;
         }
 
         public void GetLogin()
         {
-            HttpWebRequest request = RequestFactory.CreateLoginRequest(email, password);
-            HttpWebResponse response = null;
+            HttpWebRequest request = RequestFactory.CreateLoginRequest(Email, Password);
             request.BeginGetResponse(result =>
                                          {
-                                             response =
-                                                 (HttpWebResponse)
-                                                 ((HttpWebRequest)result.AsyncState).EndGetResponse(result);
+                                             var response = (HttpWebResponse)
+                                                            ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
 
                                              var streamReader = new StreamReader(response.GetResponseStream());
                                              string content = streamReader.ReadToEnd();
 
-                                             App.ViewModel.authToken = content;
-                                             App.ViewModel.password = "";
+                                             App.ViewModel.AuthToken = content;
+                                             App.ViewModel.Password = "";
                                              GetIndex();
                                          }, request);
         }
 
         public void GetIndex(decimal since = 0, string mark = null)
         {
-            HttpWebRequest request = RequestFactory.CreateListRequest(50, 0, null, email, authToken);
-            HttpWebResponse response = null;
+            HttpWebRequest request = RequestFactory.CreateListRequest(50, 0, null, Email, AuthToken);
             request.BeginGetResponse(result =>
                                          {
-                                             response =
-                                                 (HttpWebResponse)
-                                                 ((HttpWebRequest)result.AsyncState).EndGetResponse(result);
-                                             App.ViewModel.globalDone = true;
+                                             var response = (HttpWebResponse)
+                                                            ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
+                                             App.ViewModel.GlobalDone = true;
                                              var streamReader = new StreamReader(response.GetResponseStream());
                                              string content = streamReader.ReadToEnd();
 
@@ -90,13 +92,12 @@ namespace MonkeyPad2
         {
             foreach (Note note in NoteIndex.Data)
             {
-                HttpWebRequest request = RequestFactory.CreateNoteRequest("GET", note, email, authToken);
-                HttpWebResponse response = null;
+                HttpWebRequest request = RequestFactory.CreateNoteRequest("GET", note, Email, AuthToken);
                 request.BeginGetResponse(result =>
                                              {
-                                                 response =
-                                                     (HttpWebResponse)
-                                                     ((HttpWebRequest)result.AsyncState).EndGetResponse(result);
+                                                 var response = (HttpWebResponse)
+                                                                ((HttpWebRequest) result.AsyncState).EndGetResponse(
+                                                                    result);
 
                                                  var streamReader = new StreamReader(response.GetResponseStream());
                                                  string content = streamReader.ReadToEnd();
