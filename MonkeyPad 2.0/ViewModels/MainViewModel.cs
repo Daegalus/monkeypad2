@@ -19,7 +19,7 @@ namespace MonkeyPad2
         // Global Variables
         public string authToken = "";
         public string email = "yulian@kuncheff.com";
-        public bool globalDone;
+        public volatile bool globalDone;
         public decimal lastCall;
         public string mark = "";
         public string password = "#3817ilj3";
@@ -37,14 +37,14 @@ namespace MonkeyPad2
             if (authToken == "")
                 GetLogin();
 
-            if (mode == "clean")
+            else if (mode == "clean")
                 GetIndex();
             else if (mode == "refresh")
                 GetIndex(lastCall);
             else if (mode == "more")
                 GetIndex(0, NoteIndex.Mark);
 
-            GetData();
+            //GetData();
             int i = 1 + 1;
         }
 
@@ -56,17 +56,15 @@ namespace MonkeyPad2
                                          {
                                              response =
                                                  (HttpWebResponse)
-                                                 ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
-                                             App.ViewModel.globalDone = true;
+                                                 ((HttpWebRequest)result.AsyncState).EndGetResponse(result);
+
+                                             var streamReader = new StreamReader(response.GetResponseStream());
+                                             string content = streamReader.ReadToEnd();
+
+                                             App.ViewModel.authToken = content;
+                                             App.ViewModel.password = "";
+                                             GetIndex();
                                          }, request);
-            while (!globalDone) ;
-            globalDone = false;
-
-            var streamReader = new StreamReader(response.GetResponseStream());
-            string content = streamReader.ReadToEnd();
-
-            authToken = content;
-            password = "";
         }
 
         public void GetIndex(decimal since = 0, string mark = null)
@@ -77,17 +75,15 @@ namespace MonkeyPad2
                                          {
                                              response =
                                                  (HttpWebResponse)
-                                                 ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
+                                                 ((HttpWebRequest)result.AsyncState).EndGetResponse(result);
                                              App.ViewModel.globalDone = true;
+                                             var streamReader = new StreamReader(response.GetResponseStream());
+                                             string content = streamReader.ReadToEnd();
+
+                                             var workIndex = JsonProcessor.FromJson<Index>(content);
+                                             NoteProcessor.ProcessIndex(workIndex, false);
+                                             GetData();
                                          }, null);
-            while (!globalDone) ;
-            globalDone = false;
-
-            var streamReader = new StreamReader(response.GetResponseStream());
-            string content = streamReader.ReadToEnd();
-
-            var workIndex = JsonProcessor.FromJson<Index>(content);
-            NoteProcessor.ProcessIndex(workIndex, false);
         }
 
         public void GetData()
@@ -96,12 +92,11 @@ namespace MonkeyPad2
             {
                 HttpWebRequest request = RequestFactory.CreateNoteRequest("GET", note, email, authToken);
                 HttpWebResponse response = null;
-                bool done = false;
                 request.BeginGetResponse(result =>
                                              {
                                                  response =
                                                      (HttpWebResponse)
-                                                     ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
+                                                     ((HttpWebRequest)result.AsyncState).EndGetResponse(result);
 
                                                  var streamReader = new StreamReader(response.GetResponseStream());
                                                  string content = streamReader.ReadToEnd();

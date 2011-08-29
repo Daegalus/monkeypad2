@@ -49,14 +49,14 @@ namespace MonkeyPad2.Requests
                                                        string authToken)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.Append("https://simple-note.appspot.com/api2/index?limit=");
+            stringBuilder.Append("https://simple-note.appspot.com/api2/index?length=");
             stringBuilder.Append(limit);
             if (since > 0)
             {
                 stringBuilder.Append("&since=");
                 stringBuilder.Append(since);
             }
-            if (mark != null || mark.Length > 0)
+            if (mark != null || (mark != null && mark.Length > 0))
             {
                 stringBuilder.Append("&mark=");
                 stringBuilder.Append(mark);
