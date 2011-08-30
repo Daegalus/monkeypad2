@@ -32,6 +32,11 @@ namespace MonkeyPad2.UI
             {
                 App.ViewModel.LoadData("clean");
             }
+            else
+            {
+                FirstListBox.ItemsSource = null;
+                FirstListBox.ItemsSource = App.ViewModel.Notes;
+            }
         }
     }
 }

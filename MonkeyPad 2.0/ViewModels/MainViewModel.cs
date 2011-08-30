@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
@@ -19,6 +20,7 @@ namespace MonkeyPad2
         public decimal LastCall;
         public string Mark = "";
         public Index NoteIndex;
+        public int globalCounter = 0;
         public SortableObservableCollection<Note> Notes = new SortableObservableCollection<Note>();
         public string Password = "#3817ilj3";
         public SortableObservableCollection<Note> Pinned = new SortableObservableCollection<Note>();
@@ -50,8 +52,7 @@ namespace MonkeyPad2
                         GetIndex(0, NoteIndex.Mark);
                         break;
                 }
-
-            //GetData();
+            IsDataLoaded = true;
         }
 
         public void GetLogin()
@@ -59,8 +60,7 @@ namespace MonkeyPad2
             HttpWebRequest request = RequestFactory.CreateLoginRequest(Email, Password);
             request.BeginGetResponse(result =>
                                          {
-                                             var response = (HttpWebResponse)
-                                                            ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
+                                             var response = request.EndGetResponse(result);
 
                                              var streamReader = new StreamReader(response.GetResponseStream());
                                              string content = streamReader.ReadToEnd();
@@ -76,8 +76,7 @@ namespace MonkeyPad2
             HttpWebRequest request = RequestFactory.CreateListRequest(50, 0, null, Email, AuthToken);
             request.BeginGetResponse(result =>
                                          {
-                                             var response = (HttpWebResponse)
-                                                            ((HttpWebRequest) result.AsyncState).EndGetResponse(result);
+                                             var response = request.EndGetResponse(result);
                                              App.ViewModel.GlobalDone = true;
                                              var streamReader = new StreamReader(response.GetResponseStream());
                                              string content = streamReader.ReadToEnd();
@@ -95,16 +94,46 @@ namespace MonkeyPad2
                 HttpWebRequest request = RequestFactory.CreateNoteRequest("GET", note, Email, AuthToken);
                 request.BeginGetResponse(result =>
                                              {
-                                                 var response = (HttpWebResponse)
-                                                                ((HttpWebRequest) result.AsyncState).EndGetResponse(
-                                                                    result);
+                                                 var response = request.EndGetResponse(result);
 
                                                  var streamReader = new StreamReader(response.GetResponseStream());
                                                  string content = streamReader.ReadToEnd();
 
                                                  var workNote = JsonProcessor.FromJson<Note>(content);
                                                  NoteProcessor.ProcessNote(workNote);
+
+                                                 globalCounter++;
+                                                 if(globalCounter == NoteIndex.Count)
+                                                 {
+                                                     UpdateLists();
+                                                 }
                                              }, null);
+            }
+        }
+
+        public void UpdateLists()
+        {
+            foreach (var note in NoteIndex.Data)
+            {
+                var temp = new List<string>(note.SystemTags);
+                if(note.SystemTags.Length > 0 && temp.Contains("pinned"))
+                {
+                    ((App)App.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                                             { Pinned.Add(note2); 
+                                                                                               NotifyPropertyChanged("Pinned"); }), note);
+                }
+                else if(note.Deleted == true)
+                {
+                    ((App)App.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                                             { Trashed.Add(note2);
+                                                                                               NotifyPropertyChanged("Trashed");}), note);
+                }
+                else
+                {
+                    ((App)App.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                                             { Notes.Add(note2);
+                                                                                               NotifyPropertyChanged("Notes");}), note);
+                }
             }
         }
 

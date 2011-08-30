@@ -66,7 +66,7 @@ namespace MonkeyPad2.Requests
             stringBuilder.Append("&email=");
             stringBuilder.Append(email);
             var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
-            request.ContentType = "application/x-www-form-urlencoded";
+            //request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = UserAgent;
             request.Method = "GET";
             return request;
@@ -83,7 +83,8 @@ namespace MonkeyPad2.Requests
             stringBuilder.Append("&email=");
             stringBuilder.Append(email);
             var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
-            request.ContentType = "application/x-www-form-urlencoded";
+            if(method != "GET")
+                request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = UserAgent;
             request.Method = method;
             _note = note;
@@ -124,7 +125,8 @@ namespace MonkeyPad2.Requests
             stringBuilder.Append("&email=");
             stringBuilder.Append(email);
             var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
-            request.ContentType = "application/x-www-form-urlencoded";
+            if(method != "GET")
+                request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = UserAgent;
             request.Method = method;
             _tag = tag;
