@@ -8,7 +8,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768" 
-    d:DataContext="{d:DesignData SampleData/MainViewModelSampleData.xaml}"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -18,15 +17,15 @@
     <!--LayoutRoot is the root grid where all page content is placed-->
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <!--Pivot Control-->
-        <controls:Pivot Title="MY APPLICATION">
+        <controls:Pivot x:Name="mainPivot" Title="MonkeyPad">
             <!--Pivot item one-->
-            <controls:PivotItem Header="first">
+            <controls:PivotItem x:Name="notesPivotItem" Header="notes">
                 <!--Double line list with text wrapping-->
-                <ListBox x:Name="FirstListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}">
+                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                           <StackPanel Margin="0,0,0,17" Width="432" Height="78">
-                              <TextBlock Text="{Binding DisplayName}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                              <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
                               <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                           </StackPanel>
                         </DataTemplate>
@@ -35,18 +34,42 @@
             </controls:PivotItem>
  
             <!--Pivot item two-->
-            <controls:PivotItem Header="second"> 
+            <controls:PivotItem x:Name="pinnedPivotItem" Header="pinned"> 
                 <!--Triple line list no text wrapping-->
-                    <ListBox x:Name="SecondListBox" Margin="0,0,-12,0" ItemsSource="{Binding Items}">
+                    <ListBox x:Name="pinnedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Pinned}">
                         <ListBox.ItemTemplate>
                             <DataTemplate>
-                                <StackPanel Margin="0,0,0,17">
-                                    <TextBlock Text="{Binding LineOne}" TextWrapping="NoWrap" Margin="12,0,0,0" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                    <TextBlock Text="{Binding LineThree}" TextWrapping="NoWrap" Margin="12,-6,0,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                                <StackPanel Margin="0,0,0,17" Width="432" Height="78">
+                                    <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                    <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
+            </controls:PivotItem>
+            <controls:PivotItem x:Name="trashedPivotItem" Header="trash">
+                <ListBox x:Name="trashedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Trashed}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,17" Width="432" Height="78">
+                                <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </controls:PivotItem>
+            <controls:PivotItem x:Name="tagsPivotItem" Header="tags">
+                <ListBox x:Name="tagsListtBox" Margin="0,0,-12,0" ItemsSource="{Binding Tags}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Margin="0,0,0,17" Width="432" Height="78">
+                                <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
+                                <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </controls:PivotItem>
         </controls:Pivot>
     </Grid>

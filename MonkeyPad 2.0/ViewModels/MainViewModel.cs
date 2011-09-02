@@ -6,6 +6,8 @@ using System.Net;
 using MonkeyPad2.Notes;
 using MonkeyPad2.Processors;
 using MonkeyPad2.Requests;
+using MonkeyPad2.Tags;
+using Index = MonkeyPad2.Notes.Index;
 
 namespace MonkeyPad2
 {
@@ -16,15 +18,16 @@ namespace MonkeyPad2
         // Global Variables
         public string AuthToken = "";
         public string Email = "yulian@kuncheff.com";
+        public string Password = "#3817ilj3";
         public volatile bool GlobalDone;
         public decimal LastCall;
         public string Mark = "";
         public Index NoteIndex;
         public int globalCounter = 0;
         public SortableObservableCollection<Note> Notes = new SortableObservableCollection<Note>();
-        public string Password = "#3817ilj3";
         public SortableObservableCollection<Note> Pinned = new SortableObservableCollection<Note>();
         public SortableObservableCollection<Note> Trashed = new SortableObservableCollection<Note>();
+        public SortableObservableCollection<Tag> Tags = new SortableObservableCollection<Tag>(); 
 
         public bool IsDataLoaded { get; private set; }
 
