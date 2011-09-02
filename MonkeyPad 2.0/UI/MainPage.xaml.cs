@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
+﻿using System.Windows;
 using Microsoft.Phone.Controls;
 
 namespace MonkeyPad2.UI
@@ -22,7 +12,7 @@ namespace MonkeyPad2.UI
 
             // Set the data context of the listbox control to the sample data
             DataContext = App.ViewModel;
-            this.Loaded += new RoutedEventHandler(MainPage_Loaded);
+            Loaded += MainPage_Loaded;
         }
 
         // Load data for the ViewModel Items
@@ -30,13 +20,21 @@ namespace MonkeyPad2.UI
         {
             if (!App.ViewModel.IsDataLoaded)
             {
+                RebindLIsts();
                 App.ViewModel.LoadData("clean");
             }
-            else
-            {
-                FirstListBox.ItemsSource = null;
-                FirstListBox.ItemsSource = App.ViewModel.Notes;
-            }
+        }
+
+        private void RebindLIsts()
+        {
+            notesListBox.ItemsSource = null;
+            pinnedListBox.ItemsSource = null;
+            trashedListBox.ItemsSource = null;
+            tagsListtBox.ItemsSource = null;
+            notesListBox.ItemsSource = App.ViewModel.Notes;
+            pinnedListBox.ItemsSource = App.ViewModel.Pinned;
+            trashedListBox.ItemsSource = App.ViewModel.Trashed;
+            tagsListtBox.ItemsSource = App.ViewModel.Tags;
         }
     }
 }
