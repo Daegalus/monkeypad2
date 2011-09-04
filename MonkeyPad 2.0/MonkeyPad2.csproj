@@ -70,6 +70,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Comparers\ModifyDateComparer.cs" />
     <Compile Include="Notes\Index.cs" />
     <Compile Include="Notes\Note.cs" />
     <Compile Include="Notes\NoteUtils.cs" />
