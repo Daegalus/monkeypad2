@@ -16,7 +16,7 @@ namespace MonkeyPad2.Processors
             }
         }
 
-        public static void ProcessNote(Note note)
+        public static Note ProcessNote(Note note)
         {
             Note savedNote = null;
             foreach (Note noteItem in App.ViewModel.NoteIndex.Data)
@@ -41,6 +41,7 @@ namespace MonkeyPad2.Processors
 
             if (savedNote != null)
                 NoteUtils.FormatDisplayInfo(savedNote);
+            return savedNote;
         }
     }
 }

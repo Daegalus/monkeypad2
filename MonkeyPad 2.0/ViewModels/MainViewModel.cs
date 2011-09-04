@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
+using System.Windows;
+using System.Windows.Threading;
+using MonkeyPad2.Comparers;
 using MonkeyPad2.Notes;
 using MonkeyPad2.Processors;
 using MonkeyPad2.Requests;
@@ -18,16 +21,17 @@ namespace MonkeyPad2
         // Global Variables
         public string AuthToken = "";
         public string Email = "yulian@kuncheff.com";
-        public string Password = "#3817ilj3";
         public volatile bool GlobalDone;
         public decimal LastCall;
         public string Mark = "";
         public Index NoteIndex;
-        public int globalCounter = 0;
         public SortableObservableCollection<Note> Notes = new SortableObservableCollection<Note>();
+        public string Password = "#3817ilj3";
         public SortableObservableCollection<Note> Pinned = new SortableObservableCollection<Note>();
+        public Dispatcher RootDispatcher = ((App) Application.Current).RootFrame.Dispatcher;
+        public SortableObservableCollection<Tag> Tags = new SortableObservableCollection<Tag>();
         public SortableObservableCollection<Note> Trashed = new SortableObservableCollection<Note>();
-        public SortableObservableCollection<Tag> Tags = new SortableObservableCollection<Tag>(); 
+        public int globalCounter;
 
         public bool IsDataLoaded { get; private set; }
 
@@ -63,7 +67,7 @@ namespace MonkeyPad2
             HttpWebRequest request = RequestFactory.CreateLoginRequest(Email, Password);
             request.BeginGetResponse(result =>
                                          {
-                                             var response = request.EndGetResponse(result);
+                                             WebResponse response = request.EndGetResponse(result);
 
                                              var streamReader = new StreamReader(response.GetResponseStream());
                                              string content = streamReader.ReadToEnd();
@@ -79,7 +83,7 @@ namespace MonkeyPad2
             HttpWebRequest request = RequestFactory.CreateListRequest(50, 0, null, Email, AuthToken);
             request.BeginGetResponse(result =>
                                          {
-                                             var response = request.EndGetResponse(result);
+                                             WebResponse response = request.EndGetResponse(result);
                                              App.ViewModel.GlobalDone = true;
                                              var streamReader = new StreamReader(response.GetResponseStream());
                                              string content = streamReader.ReadToEnd();
@@ -97,47 +101,84 @@ namespace MonkeyPad2
                 HttpWebRequest request = RequestFactory.CreateNoteRequest("GET", note, Email, AuthToken);
                 request.BeginGetResponse(result =>
                                              {
-                                                 var response = request.EndGetResponse(result);
+                                                 WebResponse response = request.EndGetResponse(result);
 
                                                  var streamReader = new StreamReader(response.GetResponseStream());
                                                  string content = streamReader.ReadToEnd();
 
                                                  var workNote = JsonProcessor.FromJson<Note>(content);
-                                                 NoteProcessor.ProcessNote(workNote);
-
+                                                 Note returnedNote = NoteProcessor.ProcessNote(workNote);
+                                                 UpdateLists(returnedNote);
                                                  globalCounter++;
-                                                 if(globalCounter == NoteIndex.Count)
+                                                 if (globalCounter == NoteIndex.Count)
                                                  {
-                                                     UpdateLists();
+                                                     //UpdateLists();
                                                  }
                                              }, null);
             }
         }
 
-        public void UpdateLists()
+        public void UpdateLists(Note note)
         {
-            foreach (var note in NoteIndex.Data)
+            //foreach (var note in NoteIndex.Data)
+            //{
+            var temp = new List<string>(note.SystemTags);
+            if (note.SystemTags.Length > 0 && temp.Contains("pinned"))
             {
-                var temp = new List<string>(note.SystemTags);
-                if(note.SystemTags.Length > 0 && temp.Contains("pinned"))
-                {
-                    ((App)App.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>((note2) =>
-                                                                                             { Pinned.Add(note2); 
-                                                                                               NotifyPropertyChanged("Pinned"); }), note);
-                }
-                else if(note.Deleted == true)
-                {
-                    ((App)App.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>((note2) =>
-                                                                                             { Trashed.Add(note2);
-                                                                                               NotifyPropertyChanged("Trashed");}), note);
-                }
-                else
-                {
-                    ((App)App.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>((note2) =>
-                                                                                             { Notes.Add(note2);
-                                                                                               NotifyPropertyChanged("Notes");}), note);
-                }
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                     {
+                                                                         var index = (new List<Note>(Pinned)).BinarySearch(note, new Comparers.ModifyDateComparer());
+                                                                         if (index < 0)
+                                                                         {
+                                                                             Pinned.Insert(~index, note2);
+                                                                         }
+                                                                         else
+                                                                         {
+                                                                             Pinned.Insert(index, note2);
+                                                                         }
+                                                                         NotifyPropertyChanged("Pinned");
+                                                                     }), note);
             }
+            else if (note.Deleted)
+            {
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                     {
+                                                                         var index = (new List<Note>(Trashed)).BinarySearch(note, new Comparers.ModifyDateComparer());
+                                                                         if (index < 0)
+                                                                         {
+                                                                             Trashed.Insert(~index, note2);
+                                                                         }
+                                                                         else
+                                                                         {
+                                                                             Trashed.Insert(index, note2);
+                                                                         }
+                                                                         NotifyPropertyChanged("Trashed");
+                                                                     }), note);
+            }
+            else
+            {
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                     {
+                                                                         var index = (new List<Note>(Notes)).BinarySearch(note,new Comparers.ModifyDateComparer());
+                                                                         if(index < 0)
+                                                                         {
+                                                                             Notes.Insert(~index, note2);
+                                                                         }
+                                                                         else
+                                                                         {
+                                                                             Notes.Insert(index, note2);
+                                                                         }
+                                                                         NotifyPropertyChanged("Notes");
+                                                                     }), note);
+            }
+            //}
+        }
+
+        public void sortList(SortableObservableCollection<Note> noteList)
+        {
+            RootDispatcher.BeginInvoke(
+                new Action<SortableObservableCollection<Note>>((noteList2) => noteList2.Sort(new ModifyDateComparer())),
+                noteList);
         }
 
         private void NotifyPropertyChanged(String propertyName)
