@@ -13,53 +13,40 @@
     Foreground="{StaticResource PhoneForegroundBrush}"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
-
+    
+    <phone:PhoneApplicationPage.Resources>
+        <DataTemplate x:Name="listBoxItemTemplateStyle">
+            <StackPanel x:Name="ItemPanel" Margin="0,0,0,7" Width="432">
+            	<StackPanel x:Name="Seperator" Height="1" Background="#5F6C96E9" Width="430" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,7,0,0"/>
+            	<StackPanel x:Name="TitleDate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="432" Margin="0" Orientation="Horizontal">
+            		<TextBlock x:Name="Title" Text="{Binding DisplayTitle}" TextWrapping="Wrap" Margin="0" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" FontSize="24" FontFamily="Calibri" Width="350" VerticalAlignment="Top" Foreground="White"/>
+            		<TextBlock x:Name="Date" Text="{Binding DisplayDate}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="0" FontSize="18.667" Width="80" FontFamily="Calibri" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#BFFFFFFF"/>
+            	</StackPanel>
+            	<StackPanel x:Name="DescriptionPanel" Orientation="Horizontal" Width="432">
+            		<TextBlock x:Name="Description" Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="0" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Calibri" FontSize="18.667" Foreground="#B1A1D2FF" Width="432"/>
+            	</StackPanel>
+            </StackPanel>
+        </DataTemplate>
+    </phone:PhoneApplicationPage.Resources>
     <!--LayoutRoot is the root grid where all page content is placed-->
-    <Grid x:Name="LayoutRoot" Background="Transparent">
+    <Grid x:Name="LayoutRoot" Background="#27FFFFFF">
         <!--Pivot Control-->
-        <controls:Pivot x:Name="mainPivot" Title="MonkeyPad">
+        <controls:Pivot x:Name="mainPivot" Title="">
             <!--Pivot item one-->
-            <controls:PivotItem x:Name="notesPivotItem" Header="notes">
+            <controls:PivotItem x:Name="notesPivotItem" Header="notes" Margin="12,18,12,0">
                 <!--Double line list with text wrapping-->
-                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                          <StackPanel Margin="0,0,0,17" Width="432" Height="78">
-                              <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                              <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                          </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" />
             </controls:PivotItem>
  
             <!--Pivot item two-->
-            <controls:PivotItem x:Name="pinnedPivotItem" Header="pinned"> 
+            <controls:PivotItem x:Name="pinnedPivotItem" Header="pinned" Margin="12,18,12,0"> 
                 <!--Triple line list no text wrapping-->
-                    <ListBox x:Name="pinnedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Pinned}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Margin="0,0,0,17" Width="432" Height="78">
-                                    <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                    <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
+                <ListBox x:Name="pinnedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Pinned}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" />
             </controls:PivotItem>
-            <controls:PivotItem x:Name="trashedPivotItem" Header="trash">
-                <ListBox x:Name="trashedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Trashed}">
-                    <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <StackPanel Margin="0,0,0,17" Width="432" Height="78">
-                                <TextBlock Text="{Binding DisplayTitle}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}"/>
-                                <TextBlock Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="12,-6,12,0" Style="{StaticResource PhoneTextSubtleStyle}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+            <controls:PivotItem x:Name="trashedPivotItem" Header="trash" Margin="12,18,12,0">
+                <ListBox x:Name="trashedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Trashed}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" />
             </controls:PivotItem>
-            <controls:PivotItem x:Name="tagsPivotItem" Header="tags">
+            <controls:PivotItem x:Name="tagsPivotItem" Header="tags" Margin="12,18,12,0">
                 <ListBox x:Name="tagsListtBox" Margin="0,0,-12,0" ItemsSource="{Binding Tags}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
@@ -72,6 +59,10 @@
                 </ListBox>
             </controls:PivotItem>
         </controls:Pivot>
+        <StackPanel x:Name="TopPanel" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="26,0" Orientation="Horizontal" Width="430">
+        	<TextBlock x:Name="ApplicationTitle" Style="{StaticResource PhoneTextNormalStyle}" Foreground="#FF442424" FontFamily="Calibri" Margin="0,0,-345,0" Width="100" HorizontalAlignment="Left" VerticalAlignment="Top" Height="30"><Run Foreground ="#FFD24848" Text="monkey"/><Run FontWeight="Bold" Text="Pad" Foreground="#FFCB862D" /><LineBreak/><Run/></TextBlock>
+        </StackPanel>
+       <!-- <Grid x:Name="adGrid" Grid.Row="2" Height="Auto" VerticalAlignment="Bottom" Background="#FFF1F1F1"> -->
     </Grid>
  
     <!--Sample code showing usage of ApplicationBar-->
