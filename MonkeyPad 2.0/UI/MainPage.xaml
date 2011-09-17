@@ -17,14 +17,22 @@
     <phone:PhoneApplicationPage.Resources>
         <DataTemplate x:Name="listBoxItemTemplateStyle">
             <StackPanel x:Name="ItemPanel" Margin="0,0,0,7" Width="432">
-            	<StackPanel x:Name="Seperator" Height="1" Background="#5F6C96E9" Width="430" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,7,0,0"/>
-            	<StackPanel x:Name="TitleDate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="432" Margin="0" Orientation="Horizontal">
-            		<TextBlock x:Name="Title" Text="{Binding DisplayTitle}" TextWrapping="Wrap" Margin="0" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" FontSize="24" FontFamily="Calibri" Width="350" VerticalAlignment="Top" Foreground="White"/>
-            		<TextBlock x:Name="Date" Text="{Binding DisplayDate}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="0" FontSize="18.667" Width="80" FontFamily="Calibri" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#BFFFFFFF"/>
+            	<StackPanel x:Name="TitleDate" HorizontalAlignment="Left" VerticalAlignment="Top" Width="432" Margin="0" Orientation="Horizontal" Height="25" Background="#FFA7A7A7">
+            		<StackPanel x:Name="TagColor" Width="5" Background="#FFFF4600"/>
+            		<TextBlock x:Name="Title" Text="{Binding DisplayTitle}" TextWrapping="Wrap" Margin="0" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" FontSize="24" FontFamily="Calibri" Width="427" VerticalAlignment="Top" Foreground="#FF333333" Height="25"/>
             	</StackPanel>
             	<StackPanel x:Name="DescriptionPanel" Orientation="Horizontal" Width="432">
-            		<TextBlock x:Name="Description" Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="0" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Calibri" FontSize="18.667" Foreground="#B1A1D2FF" Width="432"/>
+            		<StackPanel.Background>
+            			<ImageBrush Stretch="Fill" ImageSource="bgTile.png"/>
+            		</StackPanel.Background>
+            		<TextBlock x:Name="Description" Text="{Binding DisplayContent}" TextWrapping="Wrap" Margin="0" Style="{StaticResource PhoneTextSubtleStyle}" HorizontalAlignment="Left" VerticalAlignment="Top" FontFamily="Calibri" FontSize="18.667" Foreground="#B1A1D2FF" Width="352"/>
+            		<StackPanel x:Name="DatePanel" Height="100" Width="80" Orientation="Horizontal">
+            			<TextBlock x:Name="Day" Text="{Binding DisplayDay}" TextWrapping="Wrap" Style="{StaticResource PhoneTextExtraLargeStyle}" Margin="0,0,352,0" FontSize="26.667" Width="35" FontFamily="Calibri" VerticalAlignment="Center" HorizontalAlignment="Right" Foreground="#BFFFFFFF"/>
+            			<TextBlock x:Name="Slash" TextWrapping="Wrap" Text="/" Width="10" FontSize="29.333"/>
+                        <TextBlock x:Name="Month" TextWrapping="Wrap" Text="{Binding DisplayMonth}" Width="35" FontSize="21.333"/>
+            		</StackPanel>
             	</StackPanel>
+            	<StackPanel x:Name="Seperator" Height="10" Background="#006C96E9" Width="430" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,7,0,0"/>
             </StackPanel>
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
