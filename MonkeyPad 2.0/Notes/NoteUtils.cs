@@ -25,34 +25,34 @@ namespace MonkeyPad2.Notes
                 noteTitle = " ";
                 noteDescription = " ";
             }
-            else if (noteLines.Length == 1 && noteLines[0].Length < 30)
+            else if (noteLines.Length == 1 && noteLines[0].Length < 45)
             {
                 noteTitle = noteLines[0];
                 noteDescription = " ";
             }
-            else if (noteLines.Length == 1 && noteLines[0].Length >= 30)
+            else if (noteLines.Length == 1 && noteLines[0].Length >= 45)
             {
-                noteTitle = noteLines[0].Substring(0,27).Trim() + "...";
+                noteTitle = noteLines[0].Substring(0,42).Trim() + "...";
                 noteDescription = " ";
             }
-            else if (noteLines.Length > 1 && noteLines[0].Length < 30 && concatLines.Length < 100)
+            else if (noteLines.Length > 1 && noteLines[0].Length < 45 && concatLines.Length < 100)
             {
                 noteTitle = noteLines[0];
                 noteDescription = concatLines;
             }
-            else if (noteLines.Length > 1 && noteLines[0].Length >= 30 && concatLines.Length < 100)
+            else if (noteLines.Length > 1 && noteLines[0].Length >= 45 && concatLines.Length < 100)
             {
-                noteTitle = noteLines[0].Substring(0, 27).Trim() + "...";
+                noteTitle = noteLines[0].Substring(0, 42).Trim() + "...";
                 noteDescription = concatLines;
             }
-            else if (noteLines.Length > 1 && noteLines[0].Length < 30 && concatLines.Length >= 100)
+            else if (noteLines.Length > 1 && noteLines[0].Length < 45 && concatLines.Length >= 100)
             {
                 noteTitle = noteLines[0];
                 noteDescription = concatLines.Substring(0,97).Trim() + "...";
             }
             else
             {
-                noteTitle = noteLines[0].Substring(0, 27) + "...";
+                noteTitle = noteLines[0].Substring(0, 42) + "...";
                 noteDescription = concatLines.Substring(0, 97).Trim() + "...";
             }
             note.DisplayContent = noteDescription;

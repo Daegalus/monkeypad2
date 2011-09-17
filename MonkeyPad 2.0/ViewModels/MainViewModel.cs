@@ -31,7 +31,19 @@ namespace MonkeyPad2
         public Dispatcher RootDispatcher = ((App) Application.Current).RootFrame.Dispatcher;
         public SortableObservableCollection<Tag> Tags = new SortableObservableCollection<Tag>();
         public SortableObservableCollection<Note> Trashed = new SortableObservableCollection<Note>();
-        public int globalCounter;
+        private int _globalcounter;
+        public int GlobalCounter
+        {
+            get
+            {
+                return _globalcounter;
+            }
+            set
+            {
+                _globalcounter = value;
+                NotifyPropertyChanged("GlobalCounter");
+            }
+        }
 
         public bool IsDataLoaded { get; private set; }
 
@@ -109,8 +121,8 @@ namespace MonkeyPad2
                                                  var workNote = JsonProcessor.FromJson<Note>(content);
                                                  Note returnedNote = NoteProcessor.ProcessNote(workNote);
                                                  UpdateLists(returnedNote);
-                                                 globalCounter++;
-                                                 if (globalCounter == NoteIndex.Count)
+                                                 
+                                                 if (GlobalCounter == NoteIndex.Count)
                                                  {
                                                      //UpdateLists();
                                                  }
@@ -136,6 +148,7 @@ namespace MonkeyPad2
                                                                          {
                                                                              Pinned.Insert(index, note2);
                                                                          }
+                                                                         GlobalCounter++;
                                                                          NotifyPropertyChanged("Pinned");
                                                                      }), note);
             }
@@ -152,6 +165,7 @@ namespace MonkeyPad2
                                                                          {
                                                                              Trashed.Insert(index, note2);
                                                                          }
+                                                                         GlobalCounter++;
                                                                          NotifyPropertyChanged("Trashed");
                                                                      }), note);
             }
@@ -168,6 +182,7 @@ namespace MonkeyPad2
                                                                          {
                                                                              Notes.Insert(index, note2);
                                                                          }
+                                                                         GlobalCounter++;
                                                                          NotifyPropertyChanged("Notes");
                                                                      }), note);
             }
