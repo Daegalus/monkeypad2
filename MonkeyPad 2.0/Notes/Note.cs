@@ -56,6 +56,32 @@ namespace MonkeyPad2.Notes
                 NotifyPropertyChanged("DisplayDate");
             }
         }
+        private string _displaymonth;
+        public string DisplayMonth
+        {
+            get
+            {
+                return _displaymonth;
+            }
+            set
+            {
+                _displaymonth = value;
+                NotifyPropertyChanged("DisplayMonth");
+            }
+        }
+        private string _displayday;
+        public string DisplayDay
+        {
+            get
+            {
+                return _displayday;
+            }
+            set
+            {
+                _displayday = value;
+                NotifyPropertyChanged("DisplayDay");
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void NotifyPropertyChanged(String propertyName)

@@ -25,6 +25,8 @@
     <SilverlightAppEntry>MonkeyPad2.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
     <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <Utf8Output>true</Utf8Output>
+    <ExpressionBlendVersion>4.0.30701.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -130,11 +132,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="packages.config" />
     <None Include="Properties\AppManifest.xml" />
     <None Include="Properties\WMAppManifest.xml" />
-    <None Include="Thumbs.db" />
     <None Include="Toolkit.Content\Thumbs.db" />
   </ItemGroup>
   <ItemGroup>
@@ -144,12 +144,12 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="README_FIRST.txt" />
     <Content Include="SplashScreenImage.jpg" />
     <Resource Include="Toolkit.Content\ApplicationBar.Cancel.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Check.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Delete.png" />
     <Resource Include="Toolkit.Content\ApplicationBar.Select.png" />
+    <Resource Include="UI\bgTile.png" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />

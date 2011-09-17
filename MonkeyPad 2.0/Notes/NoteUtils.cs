@@ -58,6 +58,8 @@ namespace MonkeyPad2.Notes
             note.DisplayContent = noteDescription;
             note.DisplayTitle = noteTitle;
             note.DisplayDate = MonkeyPadDateFormatShort(FromUnixEpochTime(note.ModifyDate));
+            note.DisplayMonth = MonkeyPadDateMonth(FromUnixEpochTime(note.ModifyDate));
+            note.DisplayDay = MonkeyPadDateDay(FromUnixEpochTime(note.ModifyDate));
         }
 
         public static DateTime FromUnixEpochTime(decimal unixTime)
@@ -65,6 +67,16 @@ namespace MonkeyPad2.Notes
             var d = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
             d = d.AddSeconds(Convert.ToDouble(unixTime));
             return d.ToLocalTime();
+        }
+
+        public static string MonkeyPadDateMonth(DateTime dateTime)
+        {
+            return dateTime.ToString("MMM");
+        }
+
+        public static string MonkeyPadDateDay(DateTime dateTime)
+        {
+            return dateTime.ToString("dd");
         }
 
         public static string MonkeyPadDateFormatShort(DateTime dateTime)
