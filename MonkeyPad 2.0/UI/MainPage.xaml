@@ -43,7 +43,7 @@
             <!--Pivot item one-->
             <controls:PivotItem x:Name="notesPivotItem" Header="notes" Margin="12,18,12,0">
                 <!--Double line list with text wrapping-->
-                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" />
+                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" SelectionChanged="notesListBox_SelectionChanged" />
             </controls:PivotItem>
  
             <!--Pivot item two-->

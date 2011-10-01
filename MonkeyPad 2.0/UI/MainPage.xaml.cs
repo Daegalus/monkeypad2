@@ -1,5 +1,7 @@
 ﻿using System.Windows;
 using Microsoft.Phone.Controls;
+using System.Windows.Controls;
+using System;
 
 namespace MonkeyPad2.UI
 {
@@ -35,6 +37,18 @@ namespace MonkeyPad2.UI
             pinnedListBox.ItemsSource = App.ViewModel.Pinned;
             trashedListBox.ItemsSource = App.ViewModel.Trashed;
             tagsListtBox.ItemsSource = App.ViewModel.Tags;
+        }
+
+        private void notesListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox.SelectedIndex > -1)
+            {
+                Notes.Note item = App.ViewModel.Notes[listBox.SelectedIndex];
+                NavigationService.Navigate(new Uri("/UI/NoteView.xaml?key=" + item.Key, UriKind.Relative));
+                listBox.SelectedIndex = -1;
+            }
+
         }
     }
 }
