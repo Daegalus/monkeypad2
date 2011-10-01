@@ -13,6 +13,19 @@ namespace MonkeyPad2.Tags
 {
     public class TagUtils
     {
+        public static string tagsToString(string[] tags)
+        {
+            string formattedTags = "";
+            int counter = 0;
+            foreach (string tag in tags)
+            {
+                if (counter < tags.Length)
+                    formattedTags += tag + ", ";
+                else
+                    formattedTags += tag;
 
+            }
+            return formattedTags;
+        }
     }
 }
