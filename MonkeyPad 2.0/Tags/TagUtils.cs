@@ -1,29 +1,18 @@
-﻿using System;
-using System.Net;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Ink;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-
-namespace MonkeyPad2.Tags
+﻿namespace MonkeyPad2.Tags
 {
     public class TagUtils
     {
         public static string tagsToString(string[] tags)
         {
-            string formattedTags = "";
-            int counter = 0;
+            var formattedTags = "";
+            var counter = 0;
             foreach (string tag in tags)
             {
-                if (counter < tags.Length)
+                if (counter < tags.Length - 1)
                     formattedTags += tag + ", ";
                 else
                     formattedTags += tag;
-
+                counter++;
             }
             return formattedTags;
         }
