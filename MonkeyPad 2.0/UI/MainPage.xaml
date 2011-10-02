@@ -7,6 +7,7 @@
     xmlns:controls="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768" 
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -43,16 +44,16 @@
             <!--Pivot item one-->
             <controls:PivotItem x:Name="notesPivotItem" Header="notes" Margin="12,18,12,0">
                 <!--Double line list with text wrapping-->
-                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" SelectionChanged="notesListBox_SelectionChanged" />
+                <ListBox x:Name="notesListBox" Margin="0,0,-12,0" ItemsSource="{Binding Notes}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" SelectionChanged="notesListBox_SelectionChanged" toolkit:TiltEffect.IsTiltEnabled="True" />
             </controls:PivotItem>
  
             <!--Pivot item two-->
             <controls:PivotItem x:Name="pinnedPivotItem" Header="pinned" Margin="12,18,12,0"> 
                 <!--Triple line list no text wrapping-->
-                <ListBox x:Name="pinnedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Pinned}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" />
+                <ListBox x:Name="pinnedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Pinned}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" SelectionChanged="pinnedListBox_SelectionChanged" toolkit:TiltEffect.IsTiltEnabled="True"  />
             </controls:PivotItem>
             <controls:PivotItem x:Name="trashedPivotItem" Header="trash" Margin="12,18,12,0">
-                <ListBox x:Name="trashedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Trashed}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" />
+                <ListBox x:Name="trashedListBox" Margin="0,0,-12,0" ItemsSource="{Binding Trashed}" ItemTemplate="{StaticResource listBoxItemTemplateStyle}" SelectionChanged="trashedListBox_SelectionChanged" toolkit:TiltEffect.IsTiltEnabled="True" />
             </controls:PivotItem>
             <controls:PivotItem x:Name="tagsPivotItem" Header="tags" Margin="12,18,12,0">
                 <ListBox x:Name="tagsListtBox" Margin="0,0,-12,0" ItemsSource="{Binding Tags}">

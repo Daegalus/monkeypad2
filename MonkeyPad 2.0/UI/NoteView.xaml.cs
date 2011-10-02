@@ -1,36 +1,36 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Animation;
-using System.Windows.Shapes;
-using Microsoft.Phone.Controls;
+using System.Windows.Navigation;
 using System.Windows.Threading;
+using MarkdownDeep;
+using Microsoft.Phone.Controls;
+using MonkeyPad2.Notes;
+using MonkeyPad2.Tags;
 
 namespace MonkeyPad2.UI
 {
     public partial class NoteView : PhoneApplicationPage
     {
-        private Notes.Note currentNote;
-        WebBrowser wb = new WebBrowser();
-        public Dispatcher RootDispatcher = ((App)Application.Current).RootFrame.Dispatcher;
+        public Dispatcher RootDispatcher = ((App) Application.Current).RootFrame.Dispatcher;
+        private Note _currentNote;
+        private WebBrowser _wb = new WebBrowser();
+
+        private readonly string _preHtml =
+            "<html><head><style>"+MarkdownCSS.CSS+"</style></head><body>";
+        private readonly string _postHtml = "</body></html>";
 
         public NoteView()
         {
             InitializeComponent();
         }
 
-        protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
         }
 
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             // Call the base implementation
             base.OnNavigatedTo(e);
@@ -39,38 +39,36 @@ namespace MonkeyPad2.UI
 
             String noteKey = "";
             UpdateLayout();
-            bool found = false;
+            var found = false;
             if (NavigationContext.QueryString.TryGetValue("key", out noteKey))
             {
-                foreach (Notes.Note note in App.ViewModel.NoteIndex.Data)
+                foreach (var note in App.ViewModel.NoteIndex.Data)
                 {
                     if (noteKey == note.Key)
                     {
-                        currentNote = note;
+                        _currentNote = note;
                         break;
                     }
                 }
 
-                if (currentNote.SystemTags.Contains<String>("markdown"))
+                if (_currentNote.SystemTags.Contains("markdown"))
                 {
-                    NoteBox.Visibility = System.Windows.Visibility.Collapsed;
-                    
-                    MarkdownDeep.Markdown markdown = new MarkdownDeep.Markdown();
-                    markdown.ExtraMode = true;
-                    markdown.SafeMode = false;
-                    string converted = markdown.Transform(currentNote.Content);
+                    NoteBox.Visibility = Visibility.Collapsed;
+                    NoteBox.Text = _currentNote.Content;
 
-                    NoteBrowser.NavigateToString(converted);
-                    NoteBrowser.Visibility = System.Windows.Visibility.Visible;
-                    
+                    var markdown = new Markdown {ExtraMode = true, SafeMode = false};
+                    var converted = markdown.Transform(_currentNote.Content);
+
+                    NoteBrowser.NavigateToString(_preHtml + converted + _postHtml);
+                    NoteBrowser.Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    NoteBox.Text = currentNote.Content;
+                    NoteBox.Text = _currentNote.Content;
                 }
 
-                Date.Text = Notes.NoteUtils.MonkeyPadDateFormatShort(Notes.NoteUtils.FromUnixEpochTime(currentNote.ModifyDate));
-                TagList.Text = MonkeyPad2.Tags.TagUtils.tagsToString(currentNote.Tags);
+                Date.Text = NoteUtils.MonkeyPadDateFormatShort(NoteUtils.FromUnixEpochTime(_currentNote.ModifyDate));
+                TagList.Text = TagUtils.tagsToString(_currentNote.Tags);
             }
         }
     }

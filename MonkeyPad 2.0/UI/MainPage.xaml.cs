@@ -1,7 +1,8 @@
-﻿using System.Windows;
-using Microsoft.Phone.Controls;
+﻿using System;
+using System.Windows;
 using System.Windows.Controls;
-using System;
+using Microsoft.Phone.Controls;
+using MonkeyPad2.Notes;
 
 namespace MonkeyPad2.UI
 {
@@ -44,11 +45,32 @@ namespace MonkeyPad2.UI
             var listBox = sender as ListBox;
             if (listBox.SelectedIndex > -1)
             {
-                Notes.Note item = App.ViewModel.Notes[listBox.SelectedIndex];
+                Note item = App.ViewModel.Notes[listBox.SelectedIndex];
                 NavigationService.Navigate(new Uri("/UI/NoteView.xaml?key=" + item.Key, UriKind.Relative));
                 listBox.SelectedIndex = -1;
             }
+        }
 
+        private void pinnedListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox.SelectedIndex > -1)
+            {
+                Note item = App.ViewModel.Pinned[listBox.SelectedIndex];
+                NavigationService.Navigate(new Uri("/UI/NoteView.xaml?key=" + item.Key, UriKind.Relative));
+                listBox.SelectedIndex = -1;
+            }
+        }
+
+        private void trashedListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listBox = sender as ListBox;
+            if (listBox.SelectedIndex > -1)
+            {
+                Note item = App.ViewModel.Trashed[listBox.SelectedIndex];
+                NavigationService.Navigate(new Uri("/UI/NoteView.xaml?key=" + item.Key, UriKind.Relative));
+                listBox.SelectedIndex = -1;
+            }
         }
     }
 }
