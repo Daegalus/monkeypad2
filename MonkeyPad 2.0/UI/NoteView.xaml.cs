@@ -71,5 +71,18 @@ namespace MonkeyPad2.UI
                 TagList.Text = TagUtils.tagsToString(_currentNote.Tags);
             }
         }
+
+        public void EditNote()
+        {
+            if(NoteBox.Visibility == Visibility.Visible)
+            {
+                NoteBox.Visibility = Visibility.Collapsed;
+            }
+            if (NoteBrowser.Visibility == Visibility.Visible)
+            {
+                NoteBrowser.Visibility = Visibility.Collapsed;
+            }
+            EditBox.Visibility = Visibility.Visible;
+        }
     }
 }

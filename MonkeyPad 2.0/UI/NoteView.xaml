@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit" xmlns:MonkeyPad2_Tags="clr-namespace:MonkeyPad2.Tags" 
     x:Class="MonkeyPad2.UI.NoteView" 
-    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="768"
+    mc:Ignorable="d" d:DesignWidth="480" d:DesignHeight="696"
     SupportedOrientations="Portrait"  Orientation="Portrait"
     shell:SystemTray.IsVisible="True">
 
@@ -41,7 +41,7 @@
 	<phone:PhoneApplicationPage.FontSize>
 		<StaticResource ResourceKey="PhoneFontSizeNormal"/>
 	</phone:PhoneApplicationPage.FontSize>
-	<!--Sample code showing usage of ApplicationBar--><!--<phone:PhoneApplicationPage.ApplicationBar>
+	<phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
             <shell:ApplicationBarIconButton IconUri="/Images/appbar_button1.png" Text="Button 1"/>
             <shell:ApplicationBarIconButton IconUri="/Images/appbar_button2.png" Text="Button 2"/>
@@ -50,7 +50,7 @@
                 <shell:ApplicationBarMenuItem Text="MenuItem 2"/>
             </shell:ApplicationBar.MenuItems>
         </shell:ApplicationBar>
-    </phone:PhoneApplicationPage.ApplicationBar>-->
+    </phone:PhoneApplicationPage.ApplicationBar>
 	<phone:PhoneApplicationPage.Foreground>
 		<StaticResource ResourceKey="PhoneForegroundBrush"/>
 	</phone:PhoneApplicationPage.Foreground>
@@ -70,6 +70,7 @@
         <StackPanel x:Name="NotePanel" Margin="0,105,0,0">
         	<TextBox x:Name="NoteBox" TextWrapping="Wrap" Text="TextBox" Height="663" BorderThickness="1" FontFamily="Corbel" FontSize="24"/>
             <phone:WebBrowser x:Name="NoteBrowser" Height="663" Visibility="Collapsed"/>
+            <TextBox x:Name="EditBox" TextWrapping="Wrap" Text="TextBox" Height="663" BorderThickness="1" FontFamily="Corbel" FontSize="24" Visibility="Collapsed"/>
         </StackPanel>
     </Grid>
 
