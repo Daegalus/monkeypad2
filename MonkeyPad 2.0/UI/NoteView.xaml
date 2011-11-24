@@ -43,12 +43,10 @@
 	</phone:PhoneApplicationPage.FontSize>
 	<phone:PhoneApplicationPage.ApplicationBar>
         <shell:ApplicationBar IsVisible="True" IsMenuEnabled="True">
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button1.png" Text="Button 1"/>
-            <shell:ApplicationBarIconButton IconUri="/Images/appbar_button2.png" Text="Button 2"/>
-            <shell:ApplicationBar.MenuItems>
-                <shell:ApplicationBarMenuItem Text="MenuItem 1"/>
-                <shell:ApplicationBarMenuItem Text="MenuItem 2"/>
-            </shell:ApplicationBar.MenuItems>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.feature.email.rest.png" IsEnabled="True" Text="Email" Click="AppBarEmailClick"/>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.edit.rest.png" Text="Edit" Click="AppBarEditClick"/>
+            <shell:ApplicationBarIconButton IconUri="/icons/appbar.favs.addto.rest.png" Text="Pin" Click="AppBarPinClick"/>
+        	<shell:ApplicationBarIconButton IconUri="/icons/appbar.delete.rest.png" IsEnabled="True" Text="Trash" Click="AppBarTrashClick"/>
         </shell:ApplicationBar>
     </phone:PhoneApplicationPage.ApplicationBar>
 	<phone:PhoneApplicationPage.Foreground>
@@ -68,7 +66,7 @@
         	<TextBlock x:Name="TagList" Margin="10,0,0,0" TextWrapping="Wrap" Text="TAG_S" Foreground="#FF505050" FontSize="21.333" FontFamily="Corbel" HorizontalAlignment="Left" VerticalAlignment="Center" Height="25" RenderTransformOrigin="1.921,-1.263"/>
         </StackPanel>
         <StackPanel x:Name="NotePanel" Margin="0,105,0,0">
-        	<TextBox x:Name="NoteBox" TextWrapping="Wrap" Text="TextBox" Height="663" BorderThickness="1" FontFamily="Corbel" FontSize="24"/>
+        	<TextBox x:Name="NoteBox" TextWrapping="Wrap" Text="TextBox" Height="592" BorderThickness="1" FontFamily="Corbel" FontSize="24"/>
             <phone:WebBrowser x:Name="NoteBrowser" Height="663" Visibility="Collapsed"/>
             <TextBox x:Name="EditBox" TextWrapping="Wrap" Text="TextBox" Height="663" BorderThickness="1" FontFamily="Corbel" FontSize="24" Visibility="Collapsed"/>
         </StackPanel>

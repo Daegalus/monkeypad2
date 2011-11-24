@@ -92,7 +92,7 @@ namespace MonkeyPad2
 
         public void GetIndex(decimal since = 0, string mark = null)
         {
-            HttpWebRequest request = RequestFactory.CreateListRequest(50, 0, null, Email, AuthToken);
+            HttpWebRequest request = RequestFactory.CreateListRequest(50, since, mark, Email, AuthToken);
             request.BeginGetResponse(result =>
                                          {
                                              WebResponse response = request.EndGetResponse(result);
@@ -102,6 +102,7 @@ namespace MonkeyPad2
 
                                              var workIndex = JsonProcessor.FromJson<Index>(content);
                                              NoteProcessor.ProcessIndex(workIndex, false);
+                                             LastCall = NoteUtils.CurrentTimeEpoch();
                                              GetData();
                                          }, null);
         }
@@ -189,11 +190,21 @@ namespace MonkeyPad2
             //}
         }
 
-        public void sortList(SortableObservableCollection<Note> noteList)
+        public void SortList(SortableObservableCollection<Note> noteList)
         {
             RootDispatcher.BeginInvoke(
                 new Action<SortableObservableCollection<Note>>((noteList2) => noteList2.Sort(new ModifyDateComparer())),
                 noteList);
+        }
+
+        public void GetMark()
+        {
+            GetIndex(0,NoteIndex.Mark);
+        }
+
+        public void Refresh()
+        {
+            GetIndex(LastCall,null);
         }
 
         private void NotifyPropertyChanged(String propertyName)
