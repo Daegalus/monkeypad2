@@ -88,5 +88,10 @@ namespace MonkeyPad2.Notes
         {
             return dateTime.ToString("dddd MMMM d, yyyy @ h:mm tt");
         }
+
+        public static decimal CurrentTimeEpoch()
+        {
+            return ((DateTime.Now.ToUniversalTime().Ticks - 621355968000000000) / 10000000);
+        }
     }
 }

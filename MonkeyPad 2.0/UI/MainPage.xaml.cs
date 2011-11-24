@@ -72,5 +72,35 @@ namespace MonkeyPad2.UI
                 listBox.SelectedIndex = -1;
             }
         }
+
+        private void AppBarNewClick(object sender, System.EventArgs e)
+        {
+            NavigationService.Navigate(new Uri("/UI/NewView.xaml", UriKind.Relative));
+        }
+
+        private void AppBarRefreshClick(object sender, System.EventArgs e)
+        {
+        	// TODO: Add event handler implementation here.
+        }
+
+        private void AppBarMoreClick(object sender, System.EventArgs e)
+        {
+        	App.ViewModel.GetMark();
+        }
+
+        private void AppBarrLogoutClick(object sender, System.EventArgs e)
+        {
+        	// TODO: Add event handler implementation here.
+        }
+
+        private void AppBarSettingsClick(object sender, System.EventArgs e)
+        {
+        	// TODO: Add event handler implementation here.
+        }
+
+        private void AppBarAboutClick(object sender, System.EventArgs e)
+        {
+        	// TODO: Add event handler implementation here.
+        }
     }
 }
