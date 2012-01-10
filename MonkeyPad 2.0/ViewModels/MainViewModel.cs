@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Windows;
 using System.Windows.Threading;
@@ -32,12 +33,10 @@ namespace MonkeyPad2
         public SortableObservableCollection<Tag> Tags = new SortableObservableCollection<Tag>();
         public SortableObservableCollection<Note> Trashed = new SortableObservableCollection<Note>();
         private int _globalcounter;
+
         public int GlobalCounter
         {
-            get
-            {
-                return _globalcounter;
-            }
+            get { return _globalcounter; }
             set
             {
                 _globalcounter = value;
@@ -122,7 +121,7 @@ namespace MonkeyPad2
                                                  var workNote = JsonProcessor.FromJson<Note>(content);
                                                  Note returnedNote = NoteProcessor.ProcessNote(workNote);
                                                  UpdateLists(returnedNote);
-                                                 
+
                                                  if (GlobalCounter == NoteIndex.Count)
                                                  {
                                                      //UpdateLists();
@@ -139,53 +138,62 @@ namespace MonkeyPad2
             if (note.SystemTags.Length > 0 && temp.Contains("pinned"))
             {
                 RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
-                                                                     {
-                                                                         var index = (new List<Note>(Pinned)).BinarySearch(note, new Comparers.ModifyDateComparer());
-                                                                         if (index < 0)
-                                                                         {
-                                                                             Pinned.Insert(~index, note2);
-                                                                         }
-                                                                         else
-                                                                         {
-                                                                             Pinned.Insert(index, note2);
-                                                                         }
-                                                                         GlobalCounter++;
-                                                                         NotifyPropertyChanged("Pinned");
-                                                                     }), note);
+                                                                {
+                                                                    int index =
+                                                                        (new List<Note>(Pinned)).BinarySearch(note2,
+                                                                                                              new ModifyDateComparer
+                                                                                                                  ());
+                                                                    if (index < 0)
+                                                                    {
+                                                                        Pinned.Insert(~index, note2);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Pinned.Insert(index, note2);
+                                                                    }
+                                                                    GlobalCounter++;
+                                                                    NotifyPropertyChanged("Pinned");
+                                                                }), note);
             }
             else if (note.Deleted)
             {
                 RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
-                                                                     {
-                                                                         var index = (new List<Note>(Trashed)).BinarySearch(note, new Comparers.ModifyDateComparer());
-                                                                         if (index < 0)
-                                                                         {
-                                                                             Trashed.Insert(~index, note2);
-                                                                         }
-                                                                         else
-                                                                         {
-                                                                             Trashed.Insert(index, note2);
-                                                                         }
-                                                                         GlobalCounter++;
-                                                                         NotifyPropertyChanged("Trashed");
-                                                                     }), note);
+                                                                {
+                                                                    int index =
+                                                                        (new List<Note>(Trashed)).BinarySearch(note2,
+                                                                                                               new ModifyDateComparer
+                                                                                                                   ());
+                                                                    if (index < 0)
+                                                                    {
+                                                                        Trashed.Insert(~index, note2);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Trashed.Insert(index, note2);
+                                                                    }
+                                                                    GlobalCounter++;
+                                                                    NotifyPropertyChanged("Trashed");
+                                                                }), note);
             }
             else
             {
                 RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
-                                                                     {
-                                                                         var index = (new List<Note>(Notes)).BinarySearch(note,new Comparers.ModifyDateComparer());
-                                                                         if(index < 0)
-                                                                         {
-                                                                             Notes.Insert(~index, note2);
-                                                                         }
-                                                                         else
-                                                                         {
-                                                                             Notes.Insert(index, note2);
-                                                                         }
-                                                                         GlobalCounter++;
-                                                                         NotifyPropertyChanged("Notes");
-                                                                     }), note);
+                                                                {
+                                                                    int index =
+                                                                        (new List<Note>(Notes)).BinarySearch(note2,
+                                                                                                             new ModifyDateComparer
+                                                                                                                 ());
+                                                                    if (index < 0)
+                                                                    {
+                                                                        Notes.Insert(~index, note2);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Notes.Insert(index, note2);
+                                                                    }
+                                                                    GlobalCounter++;
+                                                                    NotifyPropertyChanged("Notes");
+                                                                }), note);
             }
             //}
         }
@@ -197,14 +205,67 @@ namespace MonkeyPad2
                 noteList);
         }
 
+        public void MovePinned(Note pinnedNote)
+        {
+            if (!pinnedNote.SystemTags.Contains("pinned"))
+            {
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                {
+                                                                    Pinned.Remove(note2);
+                                                                    NotifyPropertyChanged("Pinned");
+                                                                }), pinnedNote);
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                {
+                                                                    int index =
+                                                                        (new List<Note>(Notes)).BinarySearch(note2,
+                                                                                                             new ModifyDateComparer
+                                                                                                                 ());
+                                                                    if (index < 0)
+                                                                    {
+                                                                        Notes.Insert(~index, note2);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Notes.Insert(index, note2);
+                                                                    }
+                                                                    NotifyPropertyChanged("Notes");
+                                                                }), pinnedNote);
+            }
+
+            if (pinnedNote.SystemTags.Contains("pinned"))
+            {
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                {
+                                                                    Notes.Remove(note2);
+                                                                    NotifyPropertyChanged("Notes");
+                                                                }), pinnedNote);
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                                                                {
+                                                                    int index =
+                                                                        (new List<Note>(Pinned)).BinarySearch(note2,
+                                                                                                              new ModifyDateComparer
+                                                                                                                  ());
+                                                                    if (index < 0)
+                                                                    {
+                                                                        Pinned.Insert(~index, note2);
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        Pinned.Insert(index, note2);
+                                                                    }
+                                                                    NotifyPropertyChanged("Pinned");
+                                                                }), pinnedNote);
+            }
+        }
+
         public void GetMark()
         {
-            GetIndex(0,NoteIndex.Mark);
+            GetIndex(0, NoteIndex.Mark);
         }
 
         public void Refresh()
         {
-            GetIndex(LastCall,null);
+            GetIndex(LastCall, null);
         }
 
         private void NotifyPropertyChanged(String propertyName)

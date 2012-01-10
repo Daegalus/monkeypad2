@@ -12,7 +12,7 @@ namespace MonkeyPad2.Processors
                                        MissingMemberHandling = MissingMemberHandling.Ignore,
                                        NullValueHandling = NullValueHandling.Ignore
                                    };
-            return JsonConvert.SerializeObject(inObject, Formatting.Indented, jsonSettings);
+            return JsonConvert.SerializeObject(inObject, Formatting.None, jsonSettings);
         }
 
         public static T FromJson<T>(String jsonContent)
