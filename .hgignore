@@ -104,3 +104,4 @@ _ReSharper.MonkeyPad 2.0/BuildScriptCache/.crc
 *.i.cs
 *ReSharper*
 *Debug*
+MonkeyPad 2.0.sln.DotSettings.user
