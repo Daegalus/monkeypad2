@@ -14,6 +14,7 @@ namespace MonkeyPad2.Requests
         private static string _email = "";
         private static string _password = "";
         private static Note _note;
+        private static EditNote _editNote;
         private static Tag _tag;
 
         public static HttpWebRequest CreateLoginRequest(string email, string password)
@@ -72,6 +73,49 @@ namespace MonkeyPad2.Requests
             return request;
         }
 
+        public static HttpWebRequest CreateNoteRequest(string method, EditNote note, string email, string authToken)
+        {
+            var stringBuilder = new StringBuilder();
+            stringBuilder.Append("https://simple-note.appspot.com/api2/data/");
+            if (note.key != null)
+                stringBuilder.Append(note.key);
+            stringBuilder.Append("?auth=");
+            stringBuilder.Append(authToken);
+            stringBuilder.Append("&email=");
+            stringBuilder.Append(email);
+            var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
+            if (method != "GET")
+                request.ContentType = "application/x-www-form-urlencoded";
+            request.UserAgent = UserAgent;
+            request.Method = method;
+            _editNote = note;
+            switch (method)
+            {
+                case "GET":
+                    return request;
+                case "POST":
+                    request.BeginGetRequestStream(result =>
+                                                      {
+                                                          var sRequest = (HttpWebRequest) result.AsyncState;
+                                                          Stream postStream = sRequest.EndGetRequestStream(result);
+                                                          _editNote.key = null;
+                                                          string data = JsonProcessor.ToJson(_editNote);
+                                                          string postData = data;
+                                                          byte[] byteArray = Encoding.UTF8.GetBytes(postData);
+                                                          postStream.Write(byteArray, 0, postData.Length);
+                                                          postStream.Close();
+                                                          _done = true;
+                                                      }, request);
+                    while (!_done) ;
+                    _done = false;
+                    return request;
+                case "DELETE":
+                    return request;
+                default:
+                    return null;
+            }
+        }
+
         public static HttpWebRequest CreateNoteRequest(string method, Note note, string email, string authToken)
         {
             var stringBuilder = new StringBuilder();
@@ -83,7 +127,7 @@ namespace MonkeyPad2.Requests
             stringBuilder.Append("&email=");
             stringBuilder.Append(email);
             var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
-            if(method != "GET")
+            if (method != "GET")
                 request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = UserAgent;
             request.Method = method;
@@ -97,6 +141,7 @@ namespace MonkeyPad2.Requests
                                                       {
                                                           var sRequest = (HttpWebRequest) result.AsyncState;
                                                           Stream postStream = sRequest.EndGetRequestStream(result);
+                                                          _note.Key = null;
                                                           string data = JsonProcessor.ToJson(_note);
                                                           string postData = data;
                                                           byte[] byteArray = Encoding.UTF8.GetBytes(postData);
@@ -125,7 +170,7 @@ namespace MonkeyPad2.Requests
             stringBuilder.Append("&email=");
             stringBuilder.Append(email);
             var request = (HttpWebRequest) WebRequest.Create(stringBuilder.ToString());
-            if(method != "GET")
+            if (method != "GET")
                 request.ContentType = "application/x-www-form-urlencoded";
             request.UserAgent = UserAgent;
             request.Method = method;

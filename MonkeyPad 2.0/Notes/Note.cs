@@ -5,6 +5,11 @@ namespace MonkeyPad2.Notes
 {
     public class Note : INotifyPropertyChanged
     {
+        private string _displaycontent;
+        private string _displaydate;
+        private string _displayday;
+        private string _displaymonth;
+        private string _displaytitle;
         public string Key { get; set; }
         public bool Deleted { get; set; }
         public decimal ModifyDate { get; set; }
@@ -17,65 +22,50 @@ namespace MonkeyPad2.Notes
         public string[] SystemTags { get; set; }
         public string[] Tags { get; set; }
         public string Content { get; set; }
-        private string _displaytitle;
+
         public string DisplayTitle
         {
-            get
-            {
-                return _displaytitle;
-            }
+            get { return _displaytitle; }
             set
             {
                 _displaytitle = value;
                 NotifyPropertyChanged("DisplayTitle");
             }
         }
-        private string _displaycontent;
+
         public string DisplayContent
         {
-            get
-            {
-                return _displaycontent;
-            }
+            get { return _displaycontent; }
             set
             {
                 _displaycontent = value;
                 NotifyPropertyChanged("DisplayContent");
             }
         }
-        private string _displaydate;
+
         public string DisplayDate
         {
-            get
-            {
-                return _displaydate;
-            }
+            get { return _displaydate; }
             set
             {
                 _displaydate = value;
                 NotifyPropertyChanged("DisplayDate");
             }
         }
-        private string _displaymonth;
+
         public string DisplayMonth
         {
-            get
-            {
-                return _displaymonth;
-            }
+            get { return _displaymonth; }
             set
             {
                 _displaymonth = value;
                 NotifyPropertyChanged("DisplayMonth");
             }
         }
-        private string _displayday;
+
         public string DisplayDay
         {
-            get
-            {
-                return _displayday;
-            }
+            get { return _displayday; }
             set
             {
                 _displayday = value;
@@ -83,7 +73,12 @@ namespace MonkeyPad2.Notes
             }
         }
 
+        #region INotifyPropertyChanged Members
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        #endregion
+
         private void NotifyPropertyChanged(String propertyName)
         {
             if (null != PropertyChanged)
