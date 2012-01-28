@@ -66,7 +66,7 @@
         	<TextBlock x:Name="TagList" Margin="10,0,0,0" TextWrapping="Wrap" Text="TAG_S" Foreground="#FF505050" FontSize="21.333" FontFamily="Corbel" HorizontalAlignment="Left" VerticalAlignment="Center" Height="25" RenderTransformOrigin="1.921,-1.263"/>
         </StackPanel>
         <StackPanel x:Name="NotePanel" Margin="0,105,0,0">
-        	<TextBox x:Name="NoteBox" TextWrapping="Wrap" Text="TextBox" Height="592" BorderThickness="1" FontFamily="Corbel" FontSize="24"/>
+        	<TextBox x:Name="NoteBox" TextWrapping="Wrap" Text="TextBox" Height="592" BorderThickness="1" FontFamily="Corbel" FontSize="24" IsReadOnly="True"/>
             <phone:WebBrowser x:Name="NoteBrowser" Height="663" Visibility="Collapsed"/>
             <TextBox x:Name="EditBox" TextWrapping="Wrap" Text="TextBox" Height="663" BorderThickness="1" FontFamily="Corbel" FontSize="24" Visibility="Collapsed"/>
         </StackPanel>

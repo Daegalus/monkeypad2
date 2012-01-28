@@ -10,6 +10,7 @@ using System.Windows.Threading;
 using MarkdownDeep;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using Microsoft.Phone.Tasks;
 using MonkeyPad2.Notes;
 using MonkeyPad2.Processors;
 using MonkeyPad2.Requests;
@@ -45,12 +46,12 @@ namespace MonkeyPad2.UI
             var saveButton = new ApplicationBarIconButton(new Uri("/icons/appbar.save.rest.png", UriKind.Relative));
             saveButton.IsEnabled = true;
             saveButton.Text = "Save";
-            saveButton.Click += AppBarSaveClick;
+            saveButton.Click += new EventHandler(AppBarSaveClick);
 
             var cancelButton = new ApplicationBarIconButton(new Uri("/icons/appbar.cancel.rest.png", UriKind.Relative));
             cancelButton.IsEnabled = true;
             cancelButton.Text = "Cancel";
-            cancelButton.Click += AppBarCancelClick;
+            cancelButton.Click += new EventHandler(AppBarCancelClick);
 
             _appBarButtonsEdit.Add(saveButton);
             _appBarButtonsEdit.Add(cancelButton);
@@ -105,54 +106,57 @@ namespace MonkeyPad2.UI
             }
         }
 
-        public void EditNote()
-        {
-            if (NoteBox.Visibility == Visibility.Visible)
-            {
-                NoteBox.Visibility = Visibility.Collapsed;
-            }
-            if (NoteBrowser.Visibility == Visibility.Visible)
-            {
-                NoteBrowser.Visibility = Visibility.Collapsed;
-            }
-            EditBox.Visibility = Visibility.Visible;
-        }
-
         private void AppBarTrashClick(object sender, EventArgs e)
         {
-            var innerNote = new Note();
-            innerNote.Key = _currentNote.Key;
-            innerNote.Version = _currentNote.Version;
+            var innerNote = new EditNote();
+            innerNote.key = _currentNote.Key;
+            innerNote.version = _currentNote.Version;
+            //innerNote.Content = _currentNote.Content;
+            innerNote.syncnum = _currentNote.SyncNum;
+            innerNote.systemtags = _currentNote.SystemTags;
+            innerNote.tags = _currentNote.Tags;
 
             if (_currentNote.SystemTags.Contains("pinned"))
             {
                 var list = new List<string>(_currentNote.SystemTags);
                 list.Remove("pinned");
-                innerNote.SystemTags = list.ToArray();
+                innerNote.systemtags = list.ToArray();
             }
 
-            innerNote.Deleted = true;
+            if(!innerNote.deleted)
+                innerNote.deleted = true;
+            else
+                innerNote.deleted = false;
 
             HttpWebRequest request = RequestFactory.CreateNoteRequest("POST", innerNote, App.ViewModel.Email,
                                                                       App.ViewModel.AuthToken);
             request.BeginGetResponse(result =>
-                                         {
-                                             WebResponse response = request.EndGetResponse(result);
+                                        {
+                                            WebResponse response = request.EndGetResponse(result);
 
-                                             var streamReader = new StreamReader(response.GetResponseStream());
-                                             string content = streamReader.ReadToEnd();
+                                            var streamReader = new StreamReader(response.GetResponseStream());
+                                            string content = streamReader.ReadToEnd();
 
-                                             var workNote = JsonProcessor.FromJson<Note>(content);
-                                             Note returnedNote = NoteProcessor.ProcessNote(workNote);
-                                             _currentNote.Deleted = returnedNote.Deleted;
-                                             _currentNote.Version = returnedNote.Version;
-                                             _currentNote.MinVersion = returnedNote.MinVersion;
-                                             _currentNote.ModifyDate = returnedNote.ModifyDate;
+                                            var workNote = JsonProcessor.FromJson<Note>(content);
+                                            //var returnedNote = NoteProcessor.ProcessNote(workNote);
+                                            _currentNote.SystemTags = workNote.SystemTags;
+                                            _currentNote.Version = workNote.Version;
+                                            _currentNote.MinVersion = workNote.MinVersion;
+                                            _currentNote.ModifyDate = workNote.ModifyDate;
+                                            _currentNote.Deleted = workNote.Deleted;
+                                            if (!String.IsNullOrEmpty(workNote.Content))
+                                            {
+                                                _currentNote.Content = workNote.Content;
+                                                _currentNote = NoteProcessor.ProcessNote(_currentNote);
+                                            }
 
-                                             Date.Text =
-                                                 NoteUtils.MonkeyPadDateFormatShort(
-                                                     NoteUtils.FromUnixEpochTime(_currentNote.ModifyDate));
-                                         }, request);
+                                            RootDispatcher.BeginInvoke(
+                                                new Action<string>((modifyDate) => { Date.Text = modifyDate; }),
+                                                NoteUtils.MonkeyPadDateFormatShort(
+                                                    NoteUtils.FromUnixEpochTime(_currentNote.ModifyDate)));
+
+                                            App.ViewModel.MoveTrashed(_currentNote);
+                                        }, request);
         }
 
         private void AppBarPinClick(object sender, EventArgs e)
@@ -203,11 +207,6 @@ namespace MonkeyPad2.UI
                                                  _currentNote = NoteProcessor.ProcessNote(_currentNote);
                                              }
 
-                                             RootDispatcher.BeginInvoke(
-                                                 new Action<string>((modifyDate) => { Date.Text = modifyDate; }),
-                                                 NoteUtils.MonkeyPadDateFormatShort(
-                                                     NoteUtils.FromUnixEpochTime(_currentNote.ModifyDate)));
-
                                              App.ViewModel.MovePinned(_currentNote);
                                          }, request);
         }
@@ -223,15 +222,71 @@ namespace MonkeyPad2.UI
             {
                 ApplicationBar.Buttons.Add(button);
             }
+
+            EditBox.Focus();
         }
 
         private void AppBarEmailClick(object sender, EventArgs e)
         {
-            // TODO: Add event handler implementation here.
+            var emailComposeTask = new EmailComposeTask
+                                       {
+                                           Body = _currentNote.Content,
+                                           Subject = "[MonkeyPad Note] " + _currentNote.DisplayTitle
+                                       };
+            emailComposeTask.Show();
         }
 
         private void AppBarSaveClick(object sender, EventArgs e)
         {
+            var innerNote = new EditNote();
+            innerNote.key = _currentNote.Key;
+            innerNote.version = _currentNote.Version;
+            decimal time = NoteUtils.CurrentTimeEpoch();
+            while(_currentNote.Content == EditBox.Text)
+            {
+                if(NoteUtils.CurrentTimeEpoch()-time > 5)
+                {
+                    break;
+                }
+            }
+            innerNote.content = EditBox.Text.Replace('\r', '\n');
+            _currentNote.Content = EditBox.Text.Replace('\r', '\n');
+            innerNote.syncnum = _currentNote.SyncNum;
+            innerNote.systemtags = _currentNote.SystemTags;
+            innerNote.tags = _currentNote.Tags;
+            innerNote.deleted = _currentNote.Deleted;
+
+            HttpWebRequest request = RequestFactory.CreateNoteRequest("POST", innerNote, App.ViewModel.Email,
+                                                                      App.ViewModel.AuthToken);
+            request.BeginGetResponse(result =>
+                                        {
+                                            WebResponse response = request.EndGetResponse(result);
+
+                                            var streamReader = new StreamReader(response.GetResponseStream());
+                                            string content = streamReader.ReadToEnd();
+
+                                            var workNote = JsonProcessor.FromJson<Note>(content);
+                                            workNote.Content = _currentNote.Content;
+                                            var returnedNote = NoteProcessor.ProcessNote(workNote);
+                                            _currentNote = returnedNote;
+
+                                            
+
+                                            RootDispatcher.BeginInvoke(
+                                                new Action<string>((modifyDate) => { Date.Text = modifyDate; }),
+                                                NoteUtils.MonkeyPadDateFormatShort(
+                                                    NoteUtils.FromUnixEpochTime(_currentNote.ModifyDate)));
+
+                                            App.ViewModel.NotifyPropertyChanged("NoteIndex");
+                                            App.ViewModel.NotifyPropertyChanged("Notes");
+                                            RootDispatcher.BeginInvoke(
+                                                new Action<Note>((currentNote) =>
+                                                                     {
+                                                                         NoteBox.Text = currentNote.Content;
+                                                                     }), _currentNote);
+                                            RootDispatcher.BeginInvoke(() => AppBarCancelClick(null, null));
+                                        }, request);
+
         }
 
         private void AppBarCancelClick(object sender, EventArgs e)

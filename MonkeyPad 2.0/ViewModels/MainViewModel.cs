@@ -258,6 +258,59 @@ namespace MonkeyPad2
             }
         }
 
+        public void MoveTrashed(Note trashedNote)
+        {
+            if (!trashedNote.Deleted)
+            {
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                {
+                    Trashed.Remove(note2);
+                    NotifyPropertyChanged("Trashed");
+                }), trashedNote);
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                {
+                    int index =
+                        (new List<Note>(Notes)).BinarySearch(note2,
+                                                             new ModifyDateComparer
+                                                                 ());
+                    if (index < 0)
+                    {
+                        Notes.Insert(~index, note2);
+                    }
+                    else
+                    {
+                        Notes.Insert(index, note2);
+                    }
+                    NotifyPropertyChanged("Notes");
+                }), trashedNote);
+            }
+
+            if (trashedNote.Deleted)
+            {
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                {
+                    Notes.Remove(note2);
+                    NotifyPropertyChanged("Notes");
+                }), trashedNote);
+                RootDispatcher.BeginInvoke(new Action<Note>((note2) =>
+                {
+                    int index =
+                        (new List<Note>(Trashed)).BinarySearch(note2,
+                                                              new ModifyDateComparer
+                                                                  ());
+                    if (index < 0)
+                    {
+                        Trashed.Insert(~index, note2);
+                    }
+                    else
+                    {
+                        Trashed.Insert(index, note2);
+                    }
+                    NotifyPropertyChanged("Trashed");
+                }), trashedNote);
+            }
+        }
+
         public void GetMark()
         {
             GetIndex(0, NoteIndex.Mark);
@@ -268,7 +321,7 @@ namespace MonkeyPad2
             GetIndex(LastCall, null);
         }
 
-        private void NotifyPropertyChanged(String propertyName)
+        public void NotifyPropertyChanged(String propertyName)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
             if (null != handler)
