@@ -1,4 +1,7 @@
-﻿using MonkeyPad2.Notes;
+﻿using System;
+using System.Windows;
+using System.Windows.Threading;
+using MonkeyPad2.Notes;
 
 namespace MonkeyPad2.Processors
 {
@@ -23,7 +26,9 @@ namespace MonkeyPad2.Processors
             {
                 if (noteItem.Key.Equals(note.Key))
                 {
-                    noteItem.Content = note.Content;
+                    if(note.Content != null)
+                        noteItem.Content = note.Content;
+
                     noteItem.CreateDate = note.CreateDate;
                     noteItem.Deleted = note.Deleted;
                     noteItem.MinVersion = note.MinVersion;
@@ -40,7 +45,7 @@ namespace MonkeyPad2.Processors
             }
 
             if (savedNote != null)
-                NoteUtils.FormatDisplayInfo(savedNote);
+                ((App)Application.Current).RootFrame.Dispatcher.BeginInvoke(new Action<Note>(NoteUtils.FormatDisplayInfo), savedNote); 
             return savedNote;
         }
     }
