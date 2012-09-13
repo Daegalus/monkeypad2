@@ -27,7 +27,7 @@ namespace MonkeyPad2
         public string Mark = "";
         public Index NoteIndex;
         public SortableObservableCollection<Note> Notes = new SortableObservableCollection<Note>();
-        public string Password = "#3817ilj3";
+        public string Password = "";
         public SortableObservableCollection<Note> Pinned = new SortableObservableCollection<Note>();
         public Dispatcher RootDispatcher = ((App) Application.Current).RootFrame.Dispatcher;
         public SortableObservableCollection<Tag> Tags = new SortableObservableCollection<Tag>();
